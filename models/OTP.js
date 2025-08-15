@@ -22,15 +22,18 @@ const OTPSchema=new mongoose.Schema({
 
     
 })
-async function sendEmail(email,otp){
+
+async function sendVerificationEmail(email,otp){
     try{
         const mailResponse= await mailSender(email, 'Verification mail from Code Web', otp);
         console.log("Email sent successfully", mailResponse);
     }
     catch(err){console.log("Error occured while sending email",err);throw err;}
 }
+
 OTPSchema.pre('save', async function(next){
     await sendVerificationEmail(this.email, this.otp);
     next();
 })
+
 module.exports=mongoose.model('OTP',OTPSchema);
